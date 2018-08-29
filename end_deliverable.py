@@ -64,7 +64,7 @@ def apply_mask(frame):
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
-    return mask
+    return frame, mask
 
 
 def find_contours(masked_frame):
@@ -114,7 +114,7 @@ def calculate_speed(centre, prev_centre, time_step):
     if time_step != 0:
         y = centre[1] - prev_centre[1]
         x = centre[0] - prev_centre[0]
-        return (math.hypot(x, y) / (time_step * FRAME_W))
+        return round(math.hypot(x, y) / (time_step * FRAME_W), 2)
     else:
         return 0
 
@@ -158,7 +158,7 @@ def main_loop(args):
             #if there is nothing left to process
             done = True
         else:
-            masked_frame = apply_mask(frame)
+            frame, masked_frame = apply_mask(frame)
             contour_list = find_contours(masked_frame)
             centre, radius = find_min_circle(contour_list)
 
@@ -171,7 +171,7 @@ def main_loop(args):
                 print(TEXT_OUTPUT.format(*centre, speed, angle, curr_time - prev_time));
 
             if args["display"]:
-                display(overlay_position(frame, centre, radius))
+                display_frame(overlay_position(frame, centre, radius))
                 cv2.waitKey(1) #Wait for ~1 ms to display image
 
             if args["serial"]:

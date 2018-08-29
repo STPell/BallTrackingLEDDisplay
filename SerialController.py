@@ -1,7 +1,8 @@
 import threading
 import serial
+import subprocess
 
-DATA_FORMAT = "{},{},{},{}"
+DATA_FORMAT = "{},{},{},{}\n"
 ENCODING = "utf8"
 
 class SerialController:
@@ -49,3 +50,9 @@ class SerialController:
         self.serial_socket.write(bytes(to_send, ENCODING))
         self.serial_socket.flush()
         lock.release()
+
+
+def determine_port():
+    process = subprocess.Popen(["python3", "-m", "serial.tools.list_ports"], stdout=subprocess.PIPE)
+    (output, err) = process.communicate()
+    return output
