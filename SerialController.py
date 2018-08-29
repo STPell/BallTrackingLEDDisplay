@@ -35,11 +35,7 @@ class SerialController:
     def write_data(self, *data_to_write):
         data = DATA_FORMAT.format(*data_to_write)
         if self.is_open:
-            self._send_data_via_ser(data)
-
-
-    def _send_data_via_ser(self, data):
-        threading.Thread(target=self._multi_thread_safe_send,
+            threading.Thread(target=self._multi_thread_safe_send,
                         kwargs={"data":data, "lock":self.socket_lock}).start()
 
 
@@ -51,8 +47,3 @@ class SerialController:
         self.serial_socket.flush()
         lock.release()
 
-
-def determine_port():
-    process = subprocess.Popen(["python3", "-m", "serial.tools.list_ports"], stdout=subprocess.PIPE)
-    (output, err) = process.communicate()
-    return output

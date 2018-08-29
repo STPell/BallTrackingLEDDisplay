@@ -18,12 +18,14 @@ import imutils
 import time
 import math
 import SerialController
+import statistics
 
 #detection bounds for colour of the ball
 GREEN_LOWER = (29, 86, 6)
 GREEN_UPPER = (64, 255, 255)
 
 TEXT_OUTPUT = "x={}, y={}, v={}, theta={}, delay={}"
+AVERAGE_DELAY_OUTPUT = "Average delay of {} ms"
 
 MATRIX_SIZE_X = 12
 MATRIX_SIZE_Y = 12
@@ -31,7 +33,8 @@ MATRIX_SIZE_Y = 12
 FRAME_W = 600
 FRAME_H = 600
 
-PORT = 'COM3' #port arduino is on
+W_PORT = 'COM3' #port arduino is on in windows
+U_PORT = '/dev/ttyACM0' #port test devices is on in ubuntu
 
 def input_args():
     ap = argparse.ArgumentParser()
@@ -41,6 +44,11 @@ def input_args():
     ap.add_argument("-c", "--camera", type=int, default=0, help="camera to use for input")
     ap.add_argument("-d", "--display", default=False, help="display video overlay")
     return vars(ap.parse_args())
+
+
+def average(delays):
+    ave = sum(delays)/len(delays)
+    return round(ave*1000, 2)
 
 
 def get_frame(stream, is_pre_captured):
@@ -134,7 +142,7 @@ def main_loop(args):
     centre = (0, 0)
     angle = 0
     speed = 0
-    curr_time = 0
+    delays = []
     is_pre_captured = args["video"]
 
     if is_pre_captured:
@@ -143,12 +151,13 @@ def main_loop(args):
         vs = VideoStream(src=args["camera"]).start()
 
     if args["serial"]:
-        serial_port = SerialController.SerialController(PORT)
+        serial_port = SerialController.SerialController(U_PORT)
         serial_port.open_serial()
 
     time.sleep(2.0) #delay to let things catch up
 
     done = False
+    curr_time = time.time()
     while not done:
         prev_centre, prev_angle, prev_time = centre, angle, curr_time
         frame = get_frame(vs, is_pre_captured)
@@ -169,6 +178,7 @@ def main_loop(args):
 
             if args["print_calculus"]:
                 print(TEXT_OUTPUT.format(*centre, speed, angle, curr_time - prev_time));
+                delays.append(curr_time - prev_time)
 
             if args["display"]:
                 display_frame(overlay_position(frame, centre, radius))
@@ -187,6 +197,9 @@ def main_loop(args):
 
     if args["serial"]:
         serial_port.close_serial()
+
+    if args["print_calculus"]:
+        print(AVERAGE_DELAY_OUTPUT.format(average(delays)))
 
 if __name__ == "__main__":
     args = input_args();
