@@ -106,7 +106,7 @@ def calculate_angle(centre, prev_centre):
     """Calculate the realative angle of travel between time steps"""
     o = centre[1] - prev_centre[1]
     a = centre[0] - prev_centre[0]
-    return math.degrees(math.atan2(o, a))
+    return round(math.degrees(math.atan2(o, a)))
 
 
 def calculate_speed(centre, prev_centre, time_step):
