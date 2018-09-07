@@ -143,6 +143,7 @@ def main_loop(args):
     angle = 0
     speed = 0
     delays = []
+    count = 0
     is_pre_captured = args["video"]
 
     if is_pre_captured:
@@ -151,7 +152,7 @@ def main_loop(args):
         vs = VideoStream(src=args["camera"]).start()
 
     if args["serial"]:
-        serial_port = SerialController.SerialController(U_PORT)
+        serial_port = SerialController.SerialController(W_PORT)
         serial_port.open_serial()
 
     time.sleep(2.0) #delay to let things catch up
@@ -186,6 +187,7 @@ def main_loop(args):
 
             if args["serial"]:
                 serial_port.write_data(x_pos, y_pos, speed, angle)
+                count += 4
 
 
 
@@ -197,6 +199,7 @@ def main_loop(args):
 
     if args["serial"]:
         serial_port.close_serial()
+        print(count)
 
     if args["print_calculus"]:
         print(AVERAGE_DELAY_OUTPUT.format(average(delays)))

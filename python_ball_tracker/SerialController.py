@@ -2,7 +2,7 @@ import threading
 import serial
 import subprocess
 
-DATA_FORMAT = "{},{},{},{}\n"
+DATA_FORMAT = "{} {} {} {} "
 ENCODING = "utf8"
 
 class SerialController:
