@@ -1,7 +1,7 @@
 #include <FastLED.h>
 
 int button_state = 0;
-int data[4];
+float data[4];
 int led_array[12][12];
 
 
@@ -34,6 +34,9 @@ void setup() {
   Serial.begin(9600);
   pinMode(button_mode, INPUT);
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+  while (!Serial) {
+    ; //wait for serial to connect properly
+  }
 }
 
 void debug(char* message)
@@ -56,11 +59,11 @@ void get_mode() {
 
 void piano_mode_1(int colour)
 {
-  debug("in piano");
-  Serial.println(led_array[0][data[0]]);
-  Serial.println(led_array[11][data[0]]);
+  //debug("in piano");
+  //Serial.println(led_array[0][data[0]]);
+  //Serial.println(led_array[11][data[0]]);
   
-  column(led_array[0][data[0]], led_array[11][data[0]], colour);
+  column(led_array[0][(int)data[0]], led_array[11][(int)data[0]], colour);
   //delay(30);
   FastLED.clear();
 }
@@ -101,23 +104,66 @@ void connect4_mode()
 */
 
 
-void serialEvent() 
+void serial_poll1() 
 {
-  debug("in serial event");
+ // debug("in serial event");
   int i = 0;
 
-  while (Serial.available())
+  while (i < 4)
   {
-    data[i] = Serial.parseInt();
-    i++;
+    if (Serial.available()){
+      data[i] = Serial.parseFloat();
+      i++;
+    }
+    
+  }
+  debug("complete");
+}
+
+//void test()
+//{
+//  debug("in test");
+//  if ((int)data[0] == 8)
+//  {
+//    debug("turning on");
+//    leds[0] = BLUE;
+//    FastLED.show();
+//    delay(30);
+//  } else {
+//    debug("off");
+//    off();
+//  }
+//}
+
+void off()
+{
+  for (int i = 0; i < 144; i++)
+  {
+    leds[i] = BLACK;
+    FastLED.show();
+    delay(30);
   }
 }
 
 void loop() {
   // put your main code here, to run repeatedly: 
-  
-  get_mode();
-
+//  Serial.println(data[0]);
+//Serial.println(data[1]);
+//Serial.println(data[2]);
+//Serial.println(data[3]);
+//// get_mode();
+//  serial_poll1();
+//  leds[0] = BLUE;
+//  FastLED.show();
+//  test();
+  int i = 0;
+  if (Serial.available()) {
+    i = Serial.parseInt();
+    Serial.println(i);
+    leds[i] = BLUE;
+    FastLED.show();
+  }
+  /*
  
   switch (button_state)
   {
@@ -131,6 +177,7 @@ void loop() {
       snake_mode(BLUE);
       break;
   }
+  */
 
   //column(0, 4, BLUE);
 }

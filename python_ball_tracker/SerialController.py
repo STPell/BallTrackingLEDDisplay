@@ -5,6 +5,7 @@ import subprocess
 DATA_FORMAT = "{} {} {} {} "
 ENCODING = "utf8"
 
+
 class SerialController:
     baud = 9600
     stop_bit = 1
@@ -32,11 +33,14 @@ class SerialController:
         self.serial_socket.close()
 
 
-    def write_data(self, *data_to_write):
+    def write_data(self, data_to_write):
+        for i in range(len(data_to_write)):
+            data_to_write[i] = float(data_to_write[i])
+
         data = DATA_FORMAT.format(*data_to_write)
         if self.is_open:
             threading.Thread(target=self._multi_thread_safe_send,
-                        kwargs={"data":data, "lock":self.socket_lock}).start()
+                        kwargs={"data":data, "lock":self.socket_lock}).run()
 
 
     def _multi_thread_safe_send(self, **kwargs):
@@ -45,5 +49,6 @@ class SerialController:
         lock.acquire()
         self.serial_socket.write(bytes(to_send, ENCODING))
         self.serial_socket.flush()
+        print(to_send)
         lock.release()
 

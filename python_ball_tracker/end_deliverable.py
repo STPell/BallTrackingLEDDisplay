@@ -34,7 +34,7 @@ FRAME_W = 600
 FRAME_H = 600
 
 W_PORT = 'COM3' #port arduino is on in windows
-U_PORT = '/dev/ttyACM0' #port test devices is on in ubuntu
+U_PORT = '/dev/ttyUSB0' #port test devices is on in ubuntu
 
 def input_args():
     ap = argparse.ArgumentParser()
@@ -178,7 +178,8 @@ def main_loop(args):
             angle = calculate_angle(centre, prev_centre)
 
             if args["print_calculus"]:
-                print(TEXT_OUTPUT.format(*centre, speed, angle, curr_time - prev_time));
+                #print(TEXT_OUTPUT.format(*centre, speed, angle, curr_time - prev_time));
+                print(TEXT_OUTPUT.format(x_pos, y_pos, speed, angle, curr_time - prev_time));
                 delays.append(curr_time - prev_time)
 
             if args["display"]:
@@ -186,8 +187,12 @@ def main_loop(args):
                 cv2.waitKey(1) #Wait for ~1 ms to display image
 
             if args["serial"]:
+<<<<<<< Updated upstream
                 serial_port.write_data(x_pos, y_pos, speed, angle)
                 count += 4
+=======
+                serial_port.write_data([x_pos, y_pos, speed, angle])
+>>>>>>> Stashed changes
 
 
 
