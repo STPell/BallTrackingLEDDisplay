@@ -47,8 +47,11 @@ def input_args():
 
 
 def average(delays):
-    ave = sum(delays)/len(delays)
-    return round(ave*1000, 2)
+    if len(delays) != 0:
+        ave = sum(delays)/len(delays)
+        return round(ave*1000, 2)
+    else:
+        return 0
 
 
 def get_frame(stream, is_pre_captured):
@@ -143,10 +146,9 @@ def main_loop(args):
     angle = 0
     speed = 0
     delays = []
-    count = 0
-    is_pre_captured = args["video"]
 
-    if is_pre_captured:
+
+    if args["video"]:
         vs = cv2.VideoCapture(args["video"])
     else:
         vs = VideoStream(src=args["camera"]).start()
@@ -155,7 +157,7 @@ def main_loop(args):
         serial_port = SerialController.SerialController(W_PORT)
         serial_port.open_serial()
 
-    time.sleep(2.0) #delay to let things catch up
+    time.sleep(5.0) #5 s delay to let things catch up
 
     done = False
     curr_time = time.time()
@@ -187,7 +189,6 @@ def main_loop(args):
                 cv2.waitKey(1) #Wait for ~1 ms to display image
 
             if args["serial"]:
-                count += 4
                 serial_port.write_data([x_pos, y_pos, speed, angle])
 
 
@@ -199,7 +200,6 @@ def main_loop(args):
 
     if args["serial"]:
         serial_port.close_serial()
-        print(count)
 
     if args["print_calculus"]:
         print(AVERAGE_DELAY_OUTPUT.format(average(delays)))
