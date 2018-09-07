@@ -2,7 +2,7 @@ import threading
 import serial
 import subprocess
 
-DATA_FORMAT = "{} {} {} {} "
+DATA_FORMAT = "{},{},{},{}\r\n"
 ENCODING = "utf8"
 
 
@@ -35,7 +35,7 @@ class SerialController:
 
     def write_data(self, data_to_write):
         for i in range(len(data_to_write)):
-            data_to_write[i] = float(data_to_write[i])
+            data_to_write[i] = data_to_write[i]
 
         data = DATA_FORMAT.format(*data_to_write)
         if self.is_open:

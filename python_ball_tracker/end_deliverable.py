@@ -187,13 +187,8 @@ def main_loop(args):
                 cv2.waitKey(1) #Wait for ~1 ms to display image
 
             if args["serial"]:
-<<<<<<< Updated upstream
-                serial_port.write_data(x_pos, y_pos, speed, angle)
                 count += 4
-=======
                 serial_port.write_data([x_pos, y_pos, speed, angle])
->>>>>>> Stashed changes
-
 
 
     if args["video"]:

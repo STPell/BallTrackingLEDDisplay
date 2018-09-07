@@ -12,6 +12,8 @@ int led_array[12][12];
 #define DATA_PIN 3
 #define NUM_LEDS 144
 
+#define BUFFER_SZ 30
+
 CRGB leds[NUM_LEDS];
 
 void set_led_array()
@@ -145,39 +147,69 @@ void off()
   }
 }
 
-void loop() {
-  // put your main code here, to run repeatedly: 
-//  Serial.println(data[0]);
-//Serial.println(data[1]);
-//Serial.println(data[2]);
-//Serial.println(data[3]);
-//// get_mode();
-//  serial_poll1();
-//  leds[0] = BLUE;
-//  FastLED.show();
-//  test();
-  int i = 0;
-  if (Serial.available()) {
-    i = Serial.parseInt();
-    Serial.println(i);
-    leds[i] = BLUE;
-    FastLED.show();
-  }
-  /*
- 
-  switch (button_state)
-  {
-    case (0):
-      piano_mode_1(BLUE);
-      break;
-    case (1):
-      hue_mode();
-      break;
-    case (2):
-      snake_mode(BLUE);
-      break;
-  }
-  */
+//void loop() {
+//  // put your main code here, to run repeatedly: 
+////  Serial.println(data[0]);
+////Serial.println(data[1]);
+////Serial.println(data[2]);
+////Serial.println(data[3]);
+////// get_mode();
+////  serial_poll1();
+////  leds[0] = BLUE;
+////  FastLED.show();
+////  test();
+//  int i = 0;
+//  if (Serial.available()) {
+//    i = Serial.parseInt();
+//    Serial.println(i);
+//    leds[i] = BLUE;
+//    FastLED.show();
+//  }
+//  /*
+// 
+//  switch (button_state)
+//  {
+//    case (0):
+//      piano_mode_1(BLUE);
+//      break;
+//    case (1):
+//      hue_mode();
+//      break;
+//    case (2):
+//      snake_mode(BLUE);
+//      break;
+//  }
+//  */
+//
+//  //column(0, 4, BLUE);
+//}
 
-  //column(0, 4, BLUE);
+
+void parse(char *buffer)
+{
+    char *s = strtok(buffer, ",");
+    int x;
+    while (s != NULL){
+      x = atoi(s);
+      s = strtok(NULL, ",");
+      leds[x] = BLUE;
+    }
+    FastLED.show();
+}
+
+void loop()
+{
+    static char buffer[BUFFER_SZ];
+    static size_t lg = 0;
+    while (Serial.available()) {
+        char c = Serial.read();
+        if (c == '\n') {        // carriage return
+            buffer[lg] = '\0';  // terminate the string
+            parse(buffer);
+            lg = 0;             // get ready for next message
+        }
+        else if (lg < BUFFER_SZ - 1) {
+            buffer[lg++] = c;
+        }
+    }
 }
