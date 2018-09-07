@@ -33,7 +33,7 @@ MATRIX_SIZE_Y = 12
 FRAME_W = 600
 FRAME_H = 600
 
-W_PORT = 'COM3' #port arduino is on in windows
+W_PORT = 'COM4' #port arduino is on in windows
 U_PORT = '/dev/ttyUSB0' #port test devices is on in ubuntu
 
 def input_args():
@@ -152,7 +152,7 @@ def main_loop(args):
         vs = VideoStream(src=args["camera"]).start()
 
     if args["serial"]:
-        serial_port = SerialController.SerialController(U_PORT)
+        serial_port = SerialController.SerialController(W_PORT)
         serial_port.open_serial()
 
     time.sleep(2.0) #delay to let things catch up

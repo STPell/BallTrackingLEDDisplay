@@ -188,11 +188,12 @@ void off()
 void parse(char *buffer)
 {
     char *s = strtok(buffer, ",");
-    int x;
-    while (s != NULL){
-      x = atoi(s);
-      s = strtok(NULL, ",");
-      leds[x] = BLUE;
+    int x = atoi(s);
+    s = strtok(NULL, ",");
+    int y = atoi(s);
+
+    for (int i = 0; i < 12; i++) {
+      leds[(x*12)+y] = BLUE;
     }
     FastLED.show();
 }
