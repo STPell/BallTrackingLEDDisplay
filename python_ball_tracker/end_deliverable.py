@@ -33,7 +33,7 @@ MATRIX_SIZE_Y = 12
 FRAME_W = 600
 FRAME_H = 600
 
-W_PORT = 'COM4' #port arduino is on in windows
+W_PORT = 'COM3' #port arduino is on in windows
 U_PORT = '/dev/ttyUSB0' #port test devices is on in ubuntu
 
 def input_args():
@@ -101,7 +101,10 @@ def find_min_circle(contours):
         (x, y), radius = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
+    else:
+        #ball not found
+        center = None
+        radius = None
     return center, radius
 
 
@@ -154,7 +157,7 @@ def main_loop(args):
         vs = VideoStream(src=args["camera"]).start()
 
     if args["serial"]:
-        serial_port = SerialController.SerialController(U_PORT)
+        serial_port = SerialController.SerialController(W_PORT)
         serial_port.open_serial()
 
     time.sleep(5.0) #5 s delay to let things catch up
@@ -163,7 +166,7 @@ def main_loop(args):
     curr_time = time.time()
     while not done:
         prev_centre, prev_angle, prev_time = centre, angle, curr_time
-        frame = get_frame(vs, is_pre_captured)
+        frame = get_frame(vs, args["video"])
         curr_time = time.time()
 
         if frame is None:
@@ -174,10 +177,15 @@ def main_loop(args):
             contour_list = find_contours(masked_frame)
             centre, radius = find_min_circle(contour_list)
 
-            x_pos, y_pos = map_to_matrix(*centre)
-
-            speed = calculate_speed(centre, prev_centre, curr_time - prev_time)
-            angle = calculate_angle(centre, prev_centre)
+            if centre is None:
+                # if tracker not found
+                x_pos, y_pos, speed, angle = -1, -1, 0, 0
+                prev_centre = 0,0
+                centre = 0,0
+            else:
+                x_pos, y_pos = map_to_matrix(*centre)
+                speed = calculate_speed(centre, prev_centre, curr_time - prev_time)
+                angle = calculate_angle(centre, prev_centre)
 
             if args["print_calculus"]:
                 #print(TEXT_OUTPUT.format(*centre, speed, angle, curr_time - prev_time));

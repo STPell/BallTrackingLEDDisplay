@@ -46,6 +46,5 @@ class SerialController:
         lock.acquire()
         self.serial_socket.write(bytes(to_send, ENCODING))
         self.serial_socket.flush()
-        print(to_send)
         lock.release()
 
