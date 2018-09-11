@@ -152,7 +152,7 @@ def main_loop(args):
         vs = VideoStream(src=args["camera"]).start()
 
     if args["serial"]:
-        serial_port = SerialController.SerialController(W_PORT)
+        serial_port = SerialController.SerialController(U_PORT)
         serial_port.open_serial()
 
     time.sleep(2.0) #delay to let things catch up
