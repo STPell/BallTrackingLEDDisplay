@@ -194,7 +194,10 @@ def main_loop(args):
 
             if args["display"]:
                 display_frame(overlay_position(frame, centre, radius))
-                cv2.waitKey(1) #Wait for ~1 ms to display image
+                key = cv2.waitKey(1) & 0xFF #Wait for ~1 ms to display image
+                if key == ord('q'):
+                    print("exiting on command")
+                    done = True
 
             if args["serial"]:
                 serial_port.write_data([x_pos, y_pos, speed, angle])
