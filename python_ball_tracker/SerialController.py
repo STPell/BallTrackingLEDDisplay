@@ -34,13 +34,10 @@ class SerialController:
 
 
     def write_data(self, data_to_write):
-        for i in range(len(data_to_write)):
-            data_to_write[i] = data_to_write[i]
-
         data = DATA_FORMAT.format(*data_to_write)
         if self.is_open:
             threading.Thread(target=self._multi_thread_safe_send,
-                        kwargs={"data":data, "lock":self.socket_lock}).run()
+                        kwargs={"data":data, "lock":self.socket_lock}).start()
 
 
     def _multi_thread_safe_send(self, **kwargs):
