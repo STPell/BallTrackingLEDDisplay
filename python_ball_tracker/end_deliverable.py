@@ -27,8 +27,8 @@ GREEN_UPPER = (64, 255, 255)
 TEXT_OUTPUT = "x={}, y={}, v={}, theta={}, delay={}"
 AVERAGE_DELAY_OUTPUT = "Average delay of {} ms"
 
-MATRIX_SIZE_X = 12
-MATRIX_SIZE_Y = 12
+MATRIX_SIZE_X = 9
+MATRIX_SIZE_Y = 10
 
 FRAME_W = 600
 FRAME_H = 600
@@ -102,10 +102,10 @@ def find_min_circle(contours):
         (x, y), radius = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-    # else:
-        # #ball not found
-        # center = None
-        # radius = None
+    else:
+        #ball not found
+        center = None
+        radius = None
     return center, radius
 
 
@@ -138,6 +138,9 @@ def map_to_matrix(x, y):
     """maps pixel values to LED matrix index (starting from 0)"""
     x_pos = round(x * ((MATRIX_SIZE_X - 1)/(FRAME_W - 1)))
     y_pos = round(y * ((MATRIX_SIZE_Y - 1)/(FRAME_H - 1)))
+
+    x_pos = (MATRIX_SIZE_X - 1) - x_pos #invert x direction (left and right) to account for camera perspective
+
     return x_pos, y_pos
 
 
