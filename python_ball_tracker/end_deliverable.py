@@ -66,7 +66,8 @@ def get_frame(stream, is_pre_captured):
 def apply_mask(frame):
     """Apply a mask to the frame to isolate the colour of the object"""
     # resize blur it, and convert fame to the HSV
-    frame = imutils.resize(frame, width=FRAME_W, height=FRAME_H)
+    #frame = imutils.resize(frame, width=FRAME_W, height=FRAME_H)
+    frame = cv2.resize(frame, (FRAME_W, FRAME_H), interpolation=3)
     blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -140,6 +141,19 @@ def map_to_matrix(x, y):
     return x_pos, y_pos
 
 
+def add_grid(img):
+    """Adds a grid corresponding to which LED should be on in the matrix"""
+    for i in range(1, MATRIX_SIZE_X):
+        x_pos = int(round(i * FRAME_W / MATRIX_SIZE_X, 0))
+        cv2.line(img, (x_pos, 0), (x_pos, FRAME_H), (0, 0, 255))
+
+    for i in range(1, MATRIX_SIZE_Y):
+        y_pos = int(round(i * FRAME_H / MATRIX_SIZE_Y, 0))
+        cv2.line(img, (0, y_pos), (FRAME_W, y_pos), (0, 0, 255))
+
+    return img
+
+
 def display_frame(frame):
     cv2.imshow("Frame", frame)
 
@@ -193,7 +207,7 @@ def main_loop(args):
                 delays.append(curr_time - prev_time)
 
             if args["display"]:
-                display_frame(overlay_position(frame, centre, radius))
+                display_frame(add_grid(overlay_position(frame, centre, radius)))
                 key = cv2.waitKey(1) & 0xFF #Wait for ~1 ms to display image
                 if key == ord('q'):
                     print("exiting on command")
