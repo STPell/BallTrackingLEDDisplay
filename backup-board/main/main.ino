@@ -66,7 +66,7 @@ void piano_mode_1(int colour)
   //debug("in piano");
   //Serial.println(led_array[0][data[0]]);
   //Serial.println(led_array[11][data[0]]);
-  
+
   column(led_array[0][(int)data[0]], led_array[9][(int)data[0]], colour);
   //delay(30);
   FastLED.clear();
@@ -77,9 +77,56 @@ void hue_mode()
   
 }
 
-void snake_mode(int colour)
+void follow_mode(int colour)
 {
-  leds[led_array[(int)data[1]][(int)data[0]]] = CRGB::Red;
+  int x_sum = 0;
+  int y_sum = 0;
+  int x_mean = 0;
+  int y_mean = 0;
+  
+
+  for (int i = 0; i < 5; i++)
+  {
+    
+    x_sum += data[0];
+    
+    y_sum += data[1];
+  }
+
+  x_mean = x_sum/5;
+  y_mean = y_sum/5;
+
+  Serial.println(x_mean);
+  Serial.println(y_mean);
+  Serial.println();
+  
+  leds[led_array[y_mean][x_mean]] = CRGB::Red;
+  
+  FastLED.show();
+ FastLED.clear();
+}
+
+void asteroid_mode()
+{
+  
+  if (data[0] == 0)
+  {
+    data[0] = 1;
+  }
+  if ((int)data[0] == 8)
+  {
+    data[0] = 7;
+  }
+
+  if ((int)data[3] < -50 and (int)data[3] > -130 and (int)data[2] > 3)
+  {
+    leds[(led_array[7][(int)data[0]])] = RED;
+  }
+  
+  leds[(led_array[9][(int)data[0]])] = BLUE;
+  leds[(led_array[9][(int)data[0] + 1])] = BLUE;
+  leds[(led_array[9][(int)data[0] - 1])] = BLUE;
+  leds[(led_array[8][(int)data[0]])] = BLUE;
   FastLED.show();
   FastLED.clear();
 }
@@ -115,8 +162,19 @@ void parse(char *buffer)
     {
       data[0] = atof(s);
     }
+    
     s = strtok(NULL, ",");
-    data[1] = atof(s);
+    if (atoi(s) <= 9)
+    {
+      data[1] = atof(s);
+    }
+
+    s = strtok(NULL, ",");
+    data[2] = atof(s);
+
+    s = strtok(NULL, ",");
+    data[3] = atof(s);
+    
 }
 
 
@@ -138,37 +196,33 @@ void get_serial()
 }
 
 
-void set_limit()
-{
-  if ((int) data[0] >= 8)
-  {
-    data[0] = (float)8;
-  }
-}
-
-
-
 void loop() {
-  Serial.println(mode_select);
-  //Serial.println(data[1]);
+  //Serial.println(mode_select);
+  Serial.println(data[0]);
   //Serial.println(data[2]);
   //Serial.println(data[3]);
- // get_mode();
- // set_limit();
   get_serial();
   debounce_button();
-  
- 
-  switch (mode_select)
-  {
-    case (0):
-      piano_mode_1(BLUE);
-      break;
-    case (1):
-      hue_mode();
-      break;
-    case (2):
-      snake_mode(BLUE);
-      break;
-  }
+ // test();
+ if (data[0] != -1)
+ {
+    switch (mode_select)
+    {
+      case (0):
+        piano_mode_1(BLUE);
+        break;
+      case (1):
+        asteroid_mode();
+        break;
+      case (2):
+        follow_mode(BLUE);
+        break;
+      case(3):
+        all_off();
+        break;
+    }
+ } else {
+  FastLED.clear();
+  FastLED.show();
+ }
 }

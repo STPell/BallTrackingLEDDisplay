@@ -1,11 +1,7 @@
 void all_off()
 {
-  for (int i = 0; i < 144; i++)
-  {
-    leds[i] = BLACK;
-    FastLED.show();
-    delay(30);
-  }
+  FastLED.clear();
+  FastLED.show();
 }
 
 void led_on()
