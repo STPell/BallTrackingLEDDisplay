@@ -101,10 +101,10 @@ def find_min_circle(contours):
         (x, y), radius = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-    else:
-        #ball not found
-        center = None
-        radius = None
+    # else:
+        # #ball not found
+        # center = None
+        # radius = None
     return center, radius
 
 
