@@ -1,3 +1,8 @@
+void all_off()
+{
+  FastLED.clear();
+  FastLED.show();
+}
 
 void led_on()
 {
@@ -6,14 +11,37 @@ void led_on()
   delay(30); 
 }
 
-void column(int start_led, int end_led, int colour)
+void column(int num1, int num2, int colour)
 {
-  for (int i = start_led; i < end_led; i++)
+  int start_num, end_num;
+  if (num1 > num2)
   {
-    leds[i] = colour;
+    end_num = num1;
+    start_num = num2;
+  } else
+  {
+    end_num = num2;
+    start_num = num1;
+  }
+  //debug("in column");
+  for (int i = start_num; i <= end_num; i++)
+  {
+    leds[i] = CRGB::Red;
    
   } 
-  led_on();
+  FastLED.show();
 }
 
-
+void test()
+{
+  if (data[0] == -1)
+  {
+    FastLED.clear();
+    FastLED.show();
+  }
+  else
+  {
+    leds[(int)data[0]] = CRGB::Red;
+    FastLED.show();
+  }
+}
