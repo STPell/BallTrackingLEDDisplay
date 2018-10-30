@@ -27,7 +27,7 @@ To install this on unices similar commands can be used after pip is installed.
 
 ### Serial communication
 
-Serial communication is performed using the ``pyserial`` library wrapped in a multithreaded SerailController class. The clase uses a baud rate of 9600 and sends UTF8 encoded comma separated values terminated by a new line. To change which internal port the class connects to change line 177 in ``end_deliverable.py``.
+Serial communication is performed using the ``pyserial`` library wrapped in a multithreaded SerialController class. The clase uses a baud rate of 9600 and sends UTF8 encoded comma separated values terminated by a new line. To change which internal port the class connects to change line 177 in ``end_deliverable.py``.
 
 
 ### Running the program
@@ -44,7 +44,7 @@ There are five possible options:
 ## LED Controller.
 _Written by Ash Gupta (@agu50)_
 
-Two versions of the LED program exists for different array sizes. The one used to demonstrate the prototype was ``backup-board``. The LED controller was an Arduino UNO board controlling individually adressable RGB LEDs in a 9x10 grid. 
+Two versions of the LED program exists for different array sizes. The one used to demonstrate the prototype was ``backup-board``. The LED controller was an Arduino UNO board controlling individually addressable RGB LEDs in a 9x10 grid. 
 
 Four different modes exits: standby, piano, game, and draw. These modes can be toggled via a swich connected to pin 10.
 	
