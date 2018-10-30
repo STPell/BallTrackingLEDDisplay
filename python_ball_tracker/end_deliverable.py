@@ -18,7 +18,6 @@ import imutils
 import time
 import math
 import SerialController
-import statistics
 
 #detection bounds for colour of the ball
 GREEN_LOWER = (29, 86, 6)
